@@ -1,0 +1,41 @@
+{
+    "field_name": "Demo Farm - High Risk Scenario",
+    "description": "Pre-loaded demo showing crop stress detection",
+    "bbox": {
+        "min_x": 78.486,
+        "min_y": 17.385,
+        "max_x": 78.496,
+        "max_y": 17.395
+    },
+    "center_lat": 17.39,
+    "center_lon": 78.491,
+    "area_km2": 1.0,
+    "detected_crop": "Rice",
+    "crop_confidence": "High",
+    "ndvi_recent_mean": 0.42,
+    "ndvi_past_mean": 0.68,
+    "ndvi_change": -0.26,
+    "risk_level": "High Risk",
+    "ai_score": 32,
+    "classification": {
+        "healthy": {
+            "percentage": 15.2,
+            "color": "#4CAF50"
+        },
+        "moderate": {
+            "percentage": 28.5,
+            "color": "#FFC107"
+        },
+        "unhealthy": {
+            "percentage": 56.3,
+            "color": "#F44336"
+        }
+    },
+    "weather_context": {
+        "temp": "34.5",
+        "humidity": "32",
+        "rain_status": "No rain (15 days)"
+    },
+    "confidence": "High",
+    "timestamp": "2024-02-03T18:30:00"
+}

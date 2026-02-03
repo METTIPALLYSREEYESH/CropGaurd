@@ -1,31 +1,31 @@
 {
     "bbox": [
-        82.74765,
-        21.44508,
-        82.76825,
-        21.469684
+        79.354259,
+        20.064996,
+        79.355621,
+        20.066236
     ],
     "crs": "EPSG:4326",
     "classification_results": {
         "unhealthy": {
-            "count": 321,
-            "percentage": 0.5558441558441558
+            "count": 0,
+            "percentage": 0.0
         },
         "moderate": {
-            "count": 18546,
-            "percentage": 32.114285714285714
+            "count": 7,
+            "percentage": 3.571428571428571
         },
         "healthy": {
-            "count": 38883,
-            "percentage": 67.32987012987013
+            "count": 189,
+            "percentage": 96.42857142857143
         },
-        "total_pixels": 57750,
+        "total_pixels": 196,
         "statistics": {
-            "mean": 0.5094448328018188,
-            "std": 0.09240876883268356,
-            "min": 0.10882161557674408,
-            "max": 0.7008902430534363,
-            "median": 0.5339645147323608
+            "mean": 0.5901827812194824,
+            "std": 0.04225648567080498,
+            "min": 0.4413892924785614,
+            "max": 0.6743362545967102,
+            "median": 0.5999999642372131
         }
     },
     "ai_results": {
@@ -33,12 +33,12 @@
         "risk_explanation": "\u26a0\ufe0f Early signs of stress detected. Vegetation vigor is slightly lower than previous weeks. Monitor soil moisture and check for early pest signs.",
         "action_recommendation": "\ud83d\udc40 **Advice**: Monitor soil moisture closely and check for early signs of yellowing.",
         "ai_score": 70,
-        "ndvi_change": -0.13662254810333252,
-        "current_mean": 0.5094448328018188,
-        "past_mean": 0.6460673809051514,
+        "ndvi_change": -0.06765949726104736,
+        "current_mean": 0.5901827812194824,
+        "past_mean": 0.6578422784805298,
         "detected_crop": "Wheat",
         "crop_confidence": "Medium"
     },
     "has_past_data": true,
-    "timestamp": "2026-02-03T16:42:45"
+    "timestamp": "2026-02-03T18:25:18"
 }

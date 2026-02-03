@@ -1,0 +1,30 @@
+{
+  "XYZ_PLOT": {
+    "bbox": {
+      "min_x": 79.354259,
+      "min_y": 20.064996,
+      "max_x": 79.355621,
+      "max_y": 20.066236
+    },
+    "last_analysis": {
+      "date": "2026-02-03 23:56",
+      "risk_level": "Medium Risk",
+      "ai_score": 70,
+      "detected_crop": "Wheat"
+    }
+  },
+  "ex1": {
+    "bbox": {
+      "min_x": 79.354259,
+      "min_y": 20.064996,
+      "max_x": 79.355621,
+      "max_y": 20.066236
+    },
+    "last_analysis": {
+      "date": "2026-02-04 00:55",
+      "risk_level": "Medium Risk",
+      "ai_score": 70,
+      "detected_crop": "Wheat"
+    }
+  }
+}

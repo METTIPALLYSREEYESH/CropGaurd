@@ -40,6 +40,8 @@ from utils.persistence import save_analysis, load_last_analysis
 from utils.crop_detection import detect_crop
 from utils.translations import get_text, TRANSLATIONS
 from utils.report_generator import generate_pdf_report
+from utils.field_manager import save_field, load_fields, get_field_bbox
+from utils.confidence import calculate_confidence, get_confidence_color, get_confidence_icon
 from config import APP_TITLE, APP_ICON, DEFAULT_LOCATION, DEFAULT_AREA_KM2
 
 # Page configuration
@@ -130,7 +132,65 @@ with st.sidebar:
     st.session_state.language = lang_options[selected_lang]
     lang = st.session_state.language
     
+    # Farmer Mode Toggle
+    st.markdown("---")
+    if 'farmer_mode' not in st.session_state:
+        st.session_state.farmer_mode = False
+    
+    farmer_mode = st.toggle("👨‍🌾 Farmer-Friendly Mode", value=st.session_state.farmer_mode,
+                            help="Simple language without technical terms")
+    st.session_state.farmer_mode = farmer_mode
+    
+    # Demo Mode Button
+    st.markdown("---")
+    demo_button = st.button("🎬 Load Demo Scenario", use_container_width=True, type="primary",
+                            help="Click to load a pre-configured HIGH RISK scenario for demonstration")
+    
+    if demo_button:
+        import json
+        import os
+        
+        demo_file = "data/demo_scenario.json"
+        
+        # Check if file exists
+        if not os.path.exists(demo_file):
+            st.error(f"❌ Demo file not found: {demo_file}")
+        else:
+            try:
+                with open(demo_file, 'r', encoding='utf-8') as f:
+                    demo_data = json.load(f)
+                
+                # Set demo mode flags
+                st.session_state.demo_mode = True
+                st.session_state.demo_data = demo_data
+                st.session_state.analysis_complete = False  # Reset to trigger demo load
+                
+                # Force rerun to show demo
+                st.rerun()
+                
+            except json.JSONDecodeError as e:
+                st.error(f"❌ Invalid JSON in demo file: {str(e)}")
+            except Exception as e:
+                st.error(f"❌ Demo load failed: {str(e)}")
+    
+    # Saved Fields
+    st.markdown("---")
+    st.subheader("📁 Saved Fields")
+    
+    saved_fields = load_fields()
+    if saved_fields:
+        field_names = ["Select a field..."] + list(saved_fields.keys())
+        selected_field = st.selectbox("Load Field:", field_names, key="field_selector")
+        
+        if selected_field != "Select a field...":
+            bbox_data = get_field_bbox(selected_field)
+            if bbox_data:
+                st.info(f"📍 {selected_field} loaded")
+                # Store in session for use
+                st.session_state.loaded_field_bbox = bbox_data
+    
     # Now use the selected language for headers
+    st.markdown("---")
     st.header(f"📍 {get_text('sidebar_title', lang)}")
     
     st.header("🔐 Sentinel Hub Credentials")
@@ -475,6 +535,53 @@ with tab2:
     lang = st.session_state.get('language', 'en')
     st.header(f"📊 {get_text('results_tab', lang)}")
     
+    # --- DEMO MODE HANDLING ---
+    if st.session_state.get('demo_mode', False):
+        st.warning("🎬 **DEMO MODE ACTIVE** - Showing pre-loaded scenario", icon="🎭")
+        demo_data = st.session_state.get('demo_data', {})
+        
+        # Create demo NDVI map (synthetic)
+        import numpy as np
+        demo_ndvi = np.random.uniform(0.2, 0.6, (100, 100))
+        demo_ndvi[demo_ndvi > 0.5] = np.nan  # Add some gaps
+        
+        # Override session state with demo data
+        st.session_state.ndvi_map = demo_ndvi
+        st.session_state.classification_results = {
+            'healthy': {
+                'percentage': demo_data.get('classification', {}).get('healthy', {}).get('percentage', 15.2),
+                'count': 1520,
+                'color': '#4CAF50'
+            },
+            'moderate': {
+                'percentage': demo_data.get('classification', {}).get('moderate', {}).get('percentage', 28.5),
+                'count': 2850,
+                'color': '#FFC107'
+            },
+            'unhealthy': {
+                'percentage': demo_data.get('classification', {}).get('unhealthy', {}).get('percentage', 56.3),
+                'count': 5630,
+                'color': '#F44336'
+            },
+            'statistics': {
+                'mean': 0.42,
+                'std': 0.18,
+                'min': 0.05,
+                'max': 0.75
+            }
+        }
+        st.session_state.ai_results = {
+            'risk_level': demo_data.get('risk_level', 'High Risk'),
+            'ai_score': demo_data.get('ai_score', 32),
+            'ndvi_change': demo_data.get('ndvi_change', -0.26),
+            'risk_explanation': "⚠️ Significant vegetation decline detected. Severe water stress combined with high heat (34.5°C) and low humidity (32%). No rainfall for 15 days. Immediate irrigation required.",
+            'action_recommendation': "🚨 **URGENT**: Increase irrigation immediately. Inspect field for heat stress damage. Consider emergency watering schedule.",
+            'detected_crop': demo_data.get('detected_crop', 'Rice'),
+            'crop_confidence': demo_data.get('crop_confidence', 'High'),
+            'confidence': demo_data.get('confidence', 'High')
+        }
+        st.session_state.analysis_complete = True
+    
     # --- PERSISTENCE: LOAD DATA IF NEEDED ---
     if not st.session_state.analysis_complete:
         # Try to load from disk if not in session
@@ -485,7 +592,7 @@ with tab2:
         st.info(get_text('no_analysis', lang))
     else:
         ndvi_map = st.session_state.ndvi_map
-        bbox = st.session_state.bbox
+        bbox = st.session_state.get('bbox')
         classification_results = st.session_state.classification_results
         ai_results = st.session_state.get('ai_results', {})
         
@@ -524,6 +631,23 @@ with tab2:
         <div style="text-align: center; border: 4px solid {score_color}; border-radius: 50%; width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; margin: 20px auto; box-shadow: 0 0 15px {score_color}40; background-color: white;">
             <span style="font-size: 38px; font-weight: bold; color: {score_color}; white-space: nowrap;">
                 {score}<span style="font-size: 24px; color: #888;">/100</span>
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # --- AI CONFIDENCE SCORE ---
+        confidence = ai_results.get('confidence')
+        if not confidence:
+            # Calculate confidence if not provided
+            confidence = calculate_confidence(ndvi_map, cloud_cover_pct=0)
+        
+        conf_color = get_confidence_color(confidence)
+        conf_icon = get_confidence_icon(confidence)
+        
+        st.markdown(f"""
+        <div style="text-align: center; margin-top: -10px; margin-bottom: 20px;">
+            <span style="background-color: {conf_color}20; color: {conf_color}; padding: 8px 16px; border-radius: 20px; font-weight: bold; border: 2px solid {conf_color};">
+                🎯 Confidence: {confidence} {conf_icon}
             </span>
         </div>
         """, unsafe_allow_html=True)
@@ -689,6 +813,46 @@ with tab2:
                 ]
             }
             st.table(health_data)
+        
+        # --- SAVE CURRENT FIELD ---
+        if not st.session_state.get('demo_mode', False) and bbox:
+            st.markdown("---")
+            col_save1, col_save2 = st.columns([2, 1])
+            with col_save1:
+                field_name = st.text_input("Field Name:", placeholder="e.g., North Rice Field", key="save_field_name")
+            with col_save2:
+                st.write("")  # Spacer
+                st.write("")  # Spacer
+                if st.button("💾 Save This Field", use_container_width=True, disabled=not field_name):
+                    if field_name:
+                        try:
+                            save_field(field_name, bbox, ai_results, ai_results.get('detected_crop', 'Unknown'))
+                            st.success(f"✅ Field '{field_name}' saved successfully!")
+                        except Exception as e:
+                            st.error(f"Error saving field: {str(e)}")
+        
+        # --- WHY THIS MATTERS SECTION ---
+        st.markdown("---")
+        st.markdown("### 💡 Why This Matters")
+        
+        col_why1, col_why2 = st.columns(2)
+        with col_why1:
+            st.markdown("""
+            **🌱 Early Detection**  
+            Catch crop stress before visible damage occurs. Satellite data reveals health issues 7-14 days earlier than the human eye.
+            
+            **🛰️ Zero Hardware**  
+            No expensive IoT sensors needed. Works anywhere with satellite coverage - 100% satellite-based monitoring.
+            """)
+        
+        with col_why2:
+            st.markdown("""
+            **🌍 Global Scale**  
+            Monitor from 1 acre to 1 million acres instantly. Perfect for small farmers and large agricultural operations.
+            
+            **👨‍🌾 Farmer First**  
+            Simple, actionable advice (e.g., "Irrigate now"). No PhD required to understand crop health status.
+            """)
 
 # Footer
 st.markdown("---")
