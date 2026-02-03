@@ -1,0 +1,9 @@
+streamlit
+folium
+streamlit-folium
+sentinelhub
+numpy
+matplotlib
+shapely
+geopy
+python-dotenv
