@@ -1,6 +1,5 @@
 """
-CropGuard - Satellite-Based Crop Health Monitoring System
-Main Streamlit Application
+CropGuard - Crop Health Monitoring Application
 """
 import streamlit as st
 import json
@@ -8,6 +7,11 @@ import os
 import datetime
 import numpy as np
 from streamlit_folium import st_folium
+import importlib
+
+# Force reload of ai_risk_model to pick up latest changes
+import utils.ai_risk_model
+importlib.reload(utils.ai_risk_model)
 from geopy.geocoders import Nominatim
 
 # Import utilities
@@ -34,6 +38,8 @@ from utils.ai_risk_model import (
 )
 from utils.persistence import save_analysis, load_last_analysis
 from utils.crop_detection import detect_crop
+from utils.translations import get_text, TRANSLATIONS
+from utils.report_generator import generate_pdf_report
 from config import APP_TITLE, APP_ICON, DEFAULT_LOCATION, DEFAULT_AREA_KM2
 
 # Page configuration
@@ -99,13 +105,34 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Title
-st.title(APP_TITLE)
-st.markdown("**Automated crop health assessment using Sentinel-2 satellite imagery**")
-st.markdown("---")
+# Title - Get language first
+lang = st.session_state.get('language', 'en')
+st.title(get_text('app_title', lang))
+st.markdown(f"**{get_text('app_subtitle', lang)}**")
 
-# Sidebar for credentials
+# Initialize language in session state
+if 'language' not in st.session_state:
+    st.session_state.language = 'en'
+
+# Sidebar
 with st.sidebar:
+    # Language Selector (must be first to set session state)
+    lang_options = {
+        'English': 'en',
+        'हिंदी (Hindi)': 'hi',
+        'తెలుగు (Telugu)': 'te'
+    }
+    selected_lang = st.selectbox(
+        "🌐 Language / भाषा / భాష",
+        options=list(lang_options.keys()),
+        index=0
+    )
+    st.session_state.language = lang_options[selected_lang]
+    lang = st.session_state.language
+    
+    # Now use the selected language for headers
+    st.header(f"📍 {get_text('sidebar_title', lang)}")
+    
     st.header("🔐 Sentinel Hub Credentials")
     st.markdown("Get free credentials from [Sentinel Hub](https://www.sentinel-hub.com/)")
     
@@ -145,10 +172,11 @@ if 'classification_results' not in st.session_state:
     st.session_state.classification_results = None
 
 # Main content
-tab1, tab2 = st.tabs(["📍 Select Area", "📊 Results"])
+lang = st.session_state.get('language', 'en')
+tab1, tab2 = st.tabs([f"📍 {get_text('select_area_tab', lang)}", f"📊 {get_text('results_tab', lang)}"])
 
 with tab1:
-    st.header("Step 1: Select Your Area of Interest")
+    st.header(get_text('select_area_tab', lang))
     
     # Display interactive map
     st.subheader("🗺️ Interactive Map")
@@ -388,9 +416,10 @@ with tab1:
                             final_past_mean = past_mean if ndvi_map_past is not None else current_mean
                             ndvi_change = calculate_ndvi_change(current_mean, final_past_mean)
                             risk_level = assess_risk(ndvi_change)
-                            # Pass weather context to XAI
-                            risk_explanation = get_risk_explanation(risk_level)
-                            action_recommendation = get_action_recommendation(risk_level)
+                            # Pass language to XAI
+                            current_lang = st.session_state.get('language', 'en')
+                            risk_explanation = get_risk_explanation(risk_level, lang=current_lang)
+                            action_recommendation = get_action_recommendation(risk_level, lang=current_lang)
                             ai_score = calculate_ai_score(risk_level, current_mean)
                             
                             
@@ -428,7 +457,7 @@ with tab1:
                             if save_analysis(bbox, classification_results, st.session_state.ai_results, ndvi_map_recent, ndvi_map_past):
                                 st.toast("💾 Analysis saved locally!", icon="✅")
                             
-                            st.success("✅ Analysis complete! Check the **Results** tab.")
+                            st.success(get_text('analysis_complete', current_lang))
                             
                             # Clear progress indicators
                             import time
@@ -443,7 +472,8 @@ with tab1:
                         st.code(traceback.format_exc())
 
 with tab2:
-    st.header("📊 Analysis Results")
+    lang = st.session_state.get('language', 'en')
+    st.header(f"📊 {get_text('results_tab', lang)}")
     
     # --- PERSISTENCE: LOAD DATA IF NEEDED ---
     if not st.session_state.analysis_complete:
@@ -452,7 +482,7 @@ with tab2:
             st.toast("📂 Loaded previous analysis from disk.", icon="ℹ️")
 
     if not st.session_state.analysis_complete:
-        st.info("👈 Please complete the analysis in the **Select Area** tab first.")
+        st.info(get_text('no_analysis', lang))
     else:
         ndvi_map = st.session_state.ndvi_map
         bbox = st.session_state.bbox
@@ -485,7 +515,7 @@ with tab2:
             """, unsafe_allow_html=True)
 
         # --- FEATURE 2: AI HEALTH SCORE ---
-        st.subheader("🧠 AI Health Score")
+        st.subheader(f"🧠 {get_text('ai_health_score', lang)}")
         score = ai_results.get('ai_score', 0)
         score_color = "#388e3c" if score > 79 else ("#f57c00" if score > 49 else "#d32f2f")
         
@@ -498,19 +528,55 @@ with tab2:
         </div>
         """, unsafe_allow_html=True)
 
+        # --- PDF REPORT DOWNLOAD ---
+        st.markdown("---")
+        col_pdf, col_spacer = st.columns([1, 2])
+        with col_pdf:
+            if st.button(f"📄 {get_text('download_report', lang)}", use_container_width=True):
+                with st.spinner(get_text('generating_report', lang)):
+                    try:
+                        # Get bbox info
+                        bbox_info = {
+                            'center_lat': (bbox.min_y + bbox.max_y) / 2,
+                            'center_lon': (bbox.min_x + bbox.max_x) / 2,
+                            'area_km2': st.session_state.get('area_km2', 1.0)
+                        }
+                        
+                        # Generate PDF
+                        pdf_bytes = generate_pdf_report(
+                            ai_results,
+                            bbox_info,
+                            classification_results,
+                            ndvi_map,
+                            ai_results.get('detected_crop', 'Unknown'),
+                            lang=lang  # Pass current language
+                        )
+                        
+                        # Download button
+                        st.download_button(
+                            label="⬇️ Click to Download PDF",
+                            data=pdf_bytes,
+                            file_name=f"CropGuard_Report_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.pdf",
+                            mime="application/pdf",
+                            use_container_width=True
+                        )
+                        st.success("✅ Report generated successfully!")
+                    except Exception as e:
+                        st.error(f"Error generating PDF: {str(e)}")
+
         st.markdown("---")
 
         # --- FEATURE 5: TIME COMPARISON MODE ---
-        st.subheader("🗺️ Interactive Analysis Maps")
+        st.subheader(f"🗺️ {get_text('interactive_maps', lang)}")
         
         map_option = st.radio(
-            "Select Map View:",
-            ["Recent Analysis (Current Health)", "Time Comparison (Before vs Now)"],
+            get_text('select_map_view', lang),
+            [get_text('recent_analysis', lang), get_text('time_comparison', lang)],
             horizontal=True
         )
         
-        if map_option == "Recent Analysis (Current Health)":
-             st.markdown("Toggle between Map/Satellite view to see the NDVI overlay")
+        if map_option == get_text('recent_analysis', lang):
+             st.markdown(get_text('toggle_map_view', lang))
              result_map = create_result_map(ndvi_map, bbox, classification_results)
              st_folium(result_map, width=1200, height=600)
              

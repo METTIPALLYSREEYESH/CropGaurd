@@ -1,51 +1,44 @@
 {
     "bbox": [
-        63.89657,
-        27.684279,
-        63.89981,
-        27.68597
+        82.74765,
+        21.44508,
+        82.76825,
+        21.469684
     ],
     "crs": "EPSG:4326",
     "classification_results": {
         "unhealthy": {
-            "count": 607,
-            "percentage": 99.83552631578947
+            "count": 321,
+            "percentage": 0.5558441558441558
         },
         "moderate": {
-            "count": 1,
-            "percentage": 0.1644736842105263
+            "count": 18546,
+            "percentage": 32.114285714285714
         },
         "healthy": {
-            "count": 0,
-            "percentage": 0.0
+            "count": 38883,
+            "percentage": 67.32987012987013
         },
-        "total_pixels": 608,
+        "total_pixels": 57750,
         "statistics": {
-            "mean": 0.04555034637451172,
-            "std": 0.01831268146634102,
-            "min": 0.015274634584784508,
-            "max": 0.21326616406440735,
-            "median": 0.042084962129592896
+            "mean": 0.5094448328018188,
+            "std": 0.09240876883268356,
+            "min": 0.10882161557674408,
+            "max": 0.7008902430534363,
+            "median": 0.5339645147323608
         }
     },
     "ai_results": {
-        "risk_level": "Stable",
-        "risk_explanation": "\u2705 Crop condition is stable or improving. No significant stress anomalies detected compared to the previous period.",
-        "action_recommendation": "\u2705 **Advice**: Maintain current care schedule. No immediate action required.",
-        "ai_score": 80,
-        "ndvi_change": -0.012653414160013199,
-        "current_mean": 0.04555034637451172,
-        "past_mean": 0.05820376053452492,
-        "weather_context": {
-            "temp": 28.5,
-            "humidity": 45,
-            "rain_status": "No recent rain",
-            "description": "Clear Sky (Demo Data - Add API Key)",
-            "icon": "\u2600\ufe0f"
-        },
-        "detected_crop": "Fallow / Bare Soil",
-        "crop_confidence": "High"
+        "risk_level": "Medium Risk",
+        "risk_explanation": "\u26a0\ufe0f Early signs of stress detected. Vegetation vigor is slightly lower than previous weeks. Monitor soil moisture and check for early pest signs.",
+        "action_recommendation": "\ud83d\udc40 **Advice**: Monitor soil moisture closely and check for early signs of yellowing.",
+        "ai_score": 70,
+        "ndvi_change": -0.13662254810333252,
+        "current_mean": 0.5094448328018188,
+        "past_mean": 0.6460673809051514,
+        "detected_crop": "Wheat",
+        "crop_confidence": "Medium"
     },
     "has_past_data": true,
-    "timestamp": "2026-02-03T14:05:15"
+    "timestamp": "2026-02-03T16:42:45"
 }

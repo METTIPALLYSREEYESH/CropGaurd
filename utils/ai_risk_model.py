@@ -42,59 +42,49 @@ def assess_risk(ndvi_change):
         return 'Stable'
 
 
-def get_risk_explanation(risk_level, weather_context=None):
+def get_risk_explanation(risk_level, weather_context=None, lang='en'):
     """
-    Generate a human-readable explanation for the risk level, enriched with weather data.
+    Generate human-readable explanation for the risk level.
+    Supports multilingual output.
     
     Args:
-        risk_level (str): The classification ('High Risk', 'Medium Risk', 'Stable').
-        weather_context (dict, optional): Weather info {temp, humidity, rain_status}.
+        risk_level (str): 'High Risk', 'Medium Risk', or 'Stable'
+        weather_context (dict, optional): Weather data for context
+        lang (str): Language code ('en', 'hi', 'te')
         
     Returns:
-        str: A descriptive explanation of the potential cause and status.
+        str: Explanation text
     """
-    explanation = ""
-    weather_note = ""
+    from utils.translations import get_text
     
-    # Analyze weather context if available
-    if weather_context and weather_context.get('temp') != "--":
-        temp = float(weather_context['temp'])
-        humidity = float(weather_context['humidity'])
-        
-        if temp > 35 and humidity < 40:
-            weather_note = " combined with high heat and low humidity (Drought Risk)."
-        elif weather_context.get('rain_status') == 'Heavy Rain':
-            weather_note = " possibly linked to waterlogging due to heavy rain."
-            
     if risk_level == 'High Risk':
-        explanation = f"⚠️ Significant vegetation decline detected{weather_note}. Potential causes include severe water stress, pest infestation, or disease outbreak. Immediate inspection recommended."
+        return get_text('high_risk_explanation', lang)
     elif risk_level == 'Medium Risk':
-        if weather_note:
-             explanation = f"⚠️ Early signs of stress detected{weather_note}. Vegetation vigor is slightly lower than expected."
-        else:
-             explanation = "⚠️ Early signs of stress detected. Vegetation vigor is slightly lower than previous weeks. Monitor soil moisture and check for early pest signs."
+        return get_text('medium_risk_explanation', lang)
     else:
-        explanation = "✅ Crop condition is stable or improving. No significant stress anomalies detected compared to the previous period."
-        
-    return explanation
+        return get_text('stable_explanation', lang)
 
 
-def get_action_recommendation(risk_level):
+def get_action_recommendation(risk_level, lang='en'):
     """
-    Generate actionable advice for farmers based on risk level.
+    Provide actionable advice based on risk level.
+    Supports multilingual output.
     
     Args:
-        risk_level (str): 'High Risk', 'Medium Risk', 'Stable'
-    
+        risk_level (str): 'High Risk', 'Medium Risk', or 'Stable'
+        lang (str): Language code ('en', 'hi', 'te')
+        
     Returns:
-        str: Specific action recommendation.
+        str: Action recommendation
     """
+    from utils.translations import get_text
+    
     if risk_level == 'High Risk':
-        return "🚨 **URGENT**: Increase irrigation immediately and inspect field for pest/disease outbreaks."
+        return get_text('high_risk_action', lang)
     elif risk_level == 'Medium Risk':
-        return "👀 **Advice**: Monitor soil moisture closely and check for early signs of yellowing."
+        return get_text('medium_risk_action', lang)
     else:
-        return "✅ **Advice**: Maintain current care schedule. No immediate action required."
+        return get_text('stable_action', lang)
 
 
 def calculate_ai_score(risk_level, current_ndvi_mean):
