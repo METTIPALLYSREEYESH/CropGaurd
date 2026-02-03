@@ -1,42 +1,51 @@
 {
     "bbox": [
-        85.557919,
-        24.098107,
-        85.562639,
-        24.100301
+        63.89657,
+        27.684279,
+        63.89981,
+        27.68597
     ],
     "crs": "EPSG:4326",
     "classification_results": {
         "unhealthy": {
-            "count": 184,
-            "percentage": 15.972222222222221
+            "count": 607,
+            "percentage": 99.83552631578947
         },
         "moderate": {
-            "count": 968,
-            "percentage": 84.02777777777779
+            "count": 1,
+            "percentage": 0.1644736842105263
         },
         "healthy": {
             "count": 0,
             "percentage": 0.0
         },
-        "total_pixels": 1152,
+        "total_pixels": 608,
         "statistics": {
-            "mean": 0.21622656285762787,
-            "std": 0.01928824372589588,
-            "min": 0.1436290144920349,
-            "max": 0.3228699266910553,
-            "median": 0.2176034301519394
+            "mean": 0.04555034637451172,
+            "std": 0.01831268146634102,
+            "min": 0.015274634584784508,
+            "max": 0.21326616406440735,
+            "median": 0.042084962129592896
         }
     },
     "ai_results": {
         "risk_level": "Stable",
         "risk_explanation": "\u2705 Crop condition is stable or improving. No significant stress anomalies detected compared to the previous period.",
         "action_recommendation": "\u2705 **Advice**: Maintain current care schedule. No immediate action required.",
-        "ai_score": 90,
-        "ndvi_change": -0.04793603718280792,
-        "current_mean": 0.21622656285762787,
-        "past_mean": 0.2641626000404358
+        "ai_score": 80,
+        "ndvi_change": -0.012653414160013199,
+        "current_mean": 0.04555034637451172,
+        "past_mean": 0.05820376053452492,
+        "weather_context": {
+            "temp": 28.5,
+            "humidity": 45,
+            "rain_status": "No recent rain",
+            "description": "Clear Sky (Demo Data - Add API Key)",
+            "icon": "\u2600\ufe0f"
+        },
+        "detected_crop": "Fallow / Bare Soil",
+        "crop_confidence": "High"
     },
     "has_past_data": true,
-    "timestamp": "2026-02-03T13:42:11"
+    "timestamp": "2026-02-03T14:05:15"
 }

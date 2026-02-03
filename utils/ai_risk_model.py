@@ -42,22 +42,41 @@ def assess_risk(ndvi_change):
         return 'Stable'
 
 
-def get_risk_explanation(risk_level):
+def get_risk_explanation(risk_level, weather_context=None):
     """
-    Generate a human-readable explanation for the risk level.
+    Generate a human-readable explanation for the risk level, enriched with weather data.
     
     Args:
         risk_level (str): The classification ('High Risk', 'Medium Risk', 'Stable').
+        weather_context (dict, optional): Weather info {temp, humidity, rain_status}.
         
     Returns:
         str: A descriptive explanation of the potential cause and status.
     """
+    explanation = ""
+    weather_note = ""
+    
+    # Analyze weather context if available
+    if weather_context and weather_context.get('temp') != "--":
+        temp = float(weather_context['temp'])
+        humidity = float(weather_context['humidity'])
+        
+        if temp > 35 and humidity < 40:
+            weather_note = " combined with high heat and low humidity (Drought Risk)."
+        elif weather_context.get('rain_status') == 'Heavy Rain':
+            weather_note = " possibly linked to waterlogging due to heavy rain."
+            
     if risk_level == 'High Risk':
-        return "⚠️ Significant vegetation decline detected. Potential causes include severe water stress, pest infestation, or disease outbreak. Immediate inspection recommended."
+        explanation = f"⚠️ Significant vegetation decline detected{weather_note}. Potential causes include severe water stress, pest infestation, or disease outbreak. Immediate inspection recommended."
     elif risk_level == 'Medium Risk':
-        return "⚠️ Early signs of stress detected. Vegetation vigor is slightly lower than previous weeks. Monitor soil moisture and check for early pest signs."
+        if weather_note:
+             explanation = f"⚠️ Early signs of stress detected{weather_note}. Vegetation vigor is slightly lower than expected."
+        else:
+             explanation = "⚠️ Early signs of stress detected. Vegetation vigor is slightly lower than previous weeks. Monitor soil moisture and check for early pest signs."
     else:
-        return "✅ Crop condition is stable or improving. No significant stress anomalies detected compared to the previous period."
+        explanation = "✅ Crop condition is stable or improving. No significant stress anomalies detected compared to the previous period."
+        
+    return explanation
 
 
 def get_action_recommendation(risk_level):

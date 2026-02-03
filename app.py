@@ -4,6 +4,7 @@ Main Streamlit Application
 """
 import streamlit as st
 import json
+import os
 import datetime
 import numpy as np
 from streamlit_folium import st_folium
@@ -32,6 +33,7 @@ from utils.ai_risk_model import (
     get_action_recommendation
 )
 from utils.persistence import save_analysis, load_last_analysis
+from utils.crop_detection import detect_crop
 from config import APP_TITLE, APP_ICON, DEFAULT_LOCATION, DEFAULT_AREA_KM2
 
 # Page configuration
@@ -376,14 +378,17 @@ with tab1:
                             past_mean = 0.0
                             if ndvi_map_past is not None:
                                 valid_ndvi_past = ndvi_map_past[~np.isnan(ndvi_map_past)]
-                                past_mean = float(np.nanmean(valid_ndvi_past)) if len(valid_ndvi_past) > 0 else current_mean # fallback
+                                past_mean = float(np.nanmean(valid_ndvi_past)) if len(valid_ndvi_past) > 0 else current_mean
                             
-                            # 2. Compute Change & Risk
-                            # Use fallback if past data missing
+                            # 2. FEATURE 6: Crop Detection
+                            current_month = datetime.datetime.now().month
+                            detected_crop, crop_confidence = detect_crop(current_mean, current_month)
+
+                            # 3. Compute Change & Risk
                             final_past_mean = past_mean if ndvi_map_past is not None else current_mean
-                            
                             ndvi_change = calculate_ndvi_change(current_mean, final_past_mean)
                             risk_level = assess_risk(ndvi_change)
+                            # Pass weather context to XAI
                             risk_explanation = get_risk_explanation(risk_level)
                             action_recommendation = get_action_recommendation(risk_level)
                             ai_score = calculate_ai_score(risk_level, current_mean)
@@ -400,7 +405,7 @@ with tab1:
                             
                             # Store in session state
                             st.session_state.ndvi_map = ndvi_map_recent
-                            st.session_state.ndvi_map_past = ndvi_map_past # Storing for Comparison Mode
+                            st.session_state.ndvi_map_past = ndvi_map_past
                             st.session_state.bbox = bbox
                             st.session_state.classification_results = classification_results
                             
@@ -412,7 +417,9 @@ with tab1:
                                 'ai_score': ai_score,
                                 'ndvi_change': ndvi_change,
                                 'current_mean': current_mean,
-                                'past_mean': final_past_mean
+                                'past_mean': final_past_mean,
+                                'detected_crop': detected_crop,
+                                'crop_confidence': crop_confidence
                             }
                             
                             st.session_state.analysis_complete = True
@@ -452,51 +459,44 @@ with tab2:
         classification_results = st.session_state.classification_results
         ai_results = st.session_state.get('ai_results', {})
         
-        # --- FEATURE 1, 3, 4: AI ALERT SYSTEM & ACTION RECOMMENDATION ---
+        # --- FEATURE 1, 3, 4, 6, 7: INTEGRATED AI DASHBOARD ---
         if ai_results:
             risk_level = ai_results['risk_level']
-            risk_color = "green"
+            weather = ai_results.get('weather_context', {})
+            detected_crop = ai_results.get('detected_crop', 'Unknown')
+            
+            risk_color = "#388e3c"  # Stable Green
             if risk_level == 'High Risk':
-                risk_color = "red"
+                risk_color = "#d32f2f"  # Alarm Red
             elif risk_level == 'Medium Risk':
-                risk_color = "orange"
+                risk_color = "#f57c00"  # Warning Orange
                 
             st.markdown(f"""
             <div style="padding: 20px; background-color: {risk_color}25; border-left: 5px solid {risk_color}; border-radius: 5px; margin-bottom: 20px;">
-                <h2 style="color: {risk_color}; margin: 0;">{ai_results['risk_level'].upper()} DETECTED</h2>
-                <p style="font-size: 18px; margin: 10px 0;"><strong>AI Analysis:</strong> {ai_results['risk_explanation']}</p>
-                 <p style="font-size: 18px; margin: 10px 0; background-color: white; padding: 10px; border-radius: 5px; border: 1px solid {risk_color};">
-                    <strong>🚜 Recommended Action:</strong> {ai_results['action_recommendation']}
-                </p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2 style="color: {risk_color}; margin: 0;">{ai_results['risk_level'].upper()}</h2>
+                    <span style="background-color: white; padding: 5px 10px; border-radius: 15px; font-weight: bold; border: 1px solid #ccc;">🌾 {detected_crop} ({ai_results.get('crop_confidence', 'Low')} Conf.)</span>
+                </div>
+                <p style="font-size: 18px; margin: 15px 0;"><strong>🤖 AI Analysis:</strong> {ai_results['risk_explanation']}</p>
+                <p style="font-size: 18px; margin: 10px 0; background-color: white; padding: 10px; border-radius: 5px; border: 1px solid {risk_color};"><strong>🚜 Action:</strong> {ai_results['action_recommendation']}</p>
                 <hr style="border-top: 1px solid {risk_color}50;">
-                <p style="margin: 0;">📉 <strong>NDVI Change (Last 30 days):</strong> {ai_results['ndvi_change']:.3f} (Lower is worse)</p>
+                <p style="margin: 0; font-size: 14px;">📉 <strong>NDVI Change:</strong> {ai_results['ndvi_change']:.3f}</p>
             </div>
             """, unsafe_allow_html=True)
 
         # --- FEATURE 2: AI HEALTH SCORE ---
-        col_score, col_story = st.columns([1, 2])
+        st.subheader("🧠 AI Health Score")
+        score = ai_results.get('ai_score', 0)
+        score_color = "#388e3c" if score > 79 else ("#f57c00" if score > 49 else "#d32f2f")
         
-        with col_score:
-            st.subheader("🧠 AI Health Score")
-            score = ai_results.get('ai_score', 0)
-            score_color = "green" if score > 79 else ("orange" if score > 49 else "red")
-            
-            st.markdown(f"""
-            <div style="text-align: center; border: 4px solid {score_color}; border-radius: 50%; width: 150px; height: 150px; line-height: 150px; margin: auto; box-shadow: 0 0 15px {score_color}40;">
-                <span style="font-size: 48px; font-weight: bold; color: {score_color};">{score}/100</span>
-            </div>
-            """, unsafe_allow_html=True)
-            st.caption("AI-computed score utilizing multi-temporal analysis & vegetation vigor.")
-
-        # --- FEATURE: HACKATHON STORY MODE ---
-        with col_story:
-            st.subheader("💡 Why this matters")
-            st.markdown("""
-            - **🌱 Early Detection**: Identifies stress *before* visible damage occurs.
-            - **🛰️ Zero Hardware**: No expensive IoT sensors needed—100% satellite-based.
-            - **🌍 Global Scale**: Monitors from 1 acre to 1 million acres instantly.
-            - **👨‍🌾 Farmer First**: Simple, actionable advice (e.g., "Irrigate now").
-            """)
+        # Flexbox centering + white-space: nowrap prevents line break
+        st.markdown(f"""
+        <div style="text-align: center; border: 4px solid {score_color}; border-radius: 50%; width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; margin: 20px auto; box-shadow: 0 0 15px {score_color}40; background-color: white;">
+            <span style="font-size: 38px; font-weight: bold; color: {score_color}; white-space: nowrap;">
+                {score}<span style="font-size: 24px; color: #888;">/100</span>
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
 
         st.markdown("---")
 
