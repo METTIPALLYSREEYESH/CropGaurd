@@ -20,19 +20,19 @@ NDVI_MODERATE = 0.5
 HEALTH_CATEGORIES = {
     'unhealthy': {
         'label': 'Unhealthy',
-        'color': '#ff4444',
+        'color': '#FF5252',  # Vibrant Red
         'threshold': (float('-inf'), NDVI_UNHEALTHY),
         'description': 'Bare soil or stressed crops'
     },
     'moderate': {
         'label': 'Moderate',
-        'color': '#ffaa00',
+        'color': '#FFC107',  # Vibrant Amber
         'threshold': (NDVI_UNHEALTHY, NDVI_MODERATE),
         'description': 'Sparse vegetation'
     },
     'healthy': {
         'label': 'Healthy',
-        'color': '#44ff44',
+        'color': '#00E676',  # Vibrant Green
         'threshold': (NDVI_MODERATE, float('inf')),
         'description': 'Dense, vigorous vegetation'
     }

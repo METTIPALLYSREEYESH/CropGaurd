@@ -205,17 +205,28 @@ def create_ndvi_histogram(ndvi_map):
     
     fig, ax = plt.subplots(figsize=(10, 5))
     
-    ax.hist(valid_ndvi, bins=50, color='green', alpha=0.7, edgecolor='black')
-    ax.axvline(HEALTH_CATEGORIES['unhealthy']['threshold'][1], 
-               color='red', linestyle='--', linewidth=2, label='Unhealthy Threshold')
-    ax.axvline(HEALTH_CATEGORIES['moderate']['threshold'][1], 
-               color='orange', linestyle='--', linewidth=2, label='Healthy Threshold')
+    # Custom vibrant styling
+    n, bins, patches = ax.hist(valid_ndvi, bins=50, color='#66BB6A', alpha=0.9, edgecolor='white')
     
-    ax.set_title('NDVI Distribution', fontsize=14, fontweight='bold')
-    ax.set_xlabel('NDVI Value')
-    ax.set_ylabel('Pixel Count')
-    ax.legend()
-    ax.grid(True, alpha=0.3)
+    # Threshold lines with cleaner look
+    ax.axvline(HEALTH_CATEGORIES['unhealthy']['threshold'][1], 
+               color='#FF5252', linestyle='--', linewidth=2.5, label='Unhealthy Threshold')
+    ax.axvline(HEALTH_CATEGORIES['moderate']['threshold'][1], 
+               color='#FFC107', linestyle='--', linewidth=2.5, label='Healthy Threshold')
+    
+    # Clean up grid and spines
+    ax.set_title('Vegetation Health Distribution (NDVI)', fontsize=14, fontweight='bold', pad=20, color='#333333')
+    ax.set_xlabel('NDVI Value', fontsize=12, labelpad=10)
+    ax.set_ylabel('Pixel Count', fontsize=12, labelpad=10)
+    ax.legend(loc='upper left', frameon=True, framealpha=0.9)
+    ax.grid(True, axis='y', alpha=0.2, linestyle='-')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    
+    # Background color
+    fig.patch.set_facecolor('#f8f9fa')
+    ax.set_facecolor('#f8f9fa')
     
     plt.tight_layout()
     return fig
@@ -234,7 +245,12 @@ def create_health_pie_chart(classification_results):
     labels = []
     sizes = []
     colors = []
+    explode = []
     
+    # Calculate max percentage safely for explode logic
+    all_percentages = [classification_results[cat]['percentage'] for cat in ['healthy', 'moderate', 'unhealthy']]
+    max_percentage = max(all_percentages) if all_percentages else 0
+
     for category_name in ['healthy', 'moderate', 'unhealthy']:
         category_info = HEALTH_CATEGORIES[category_name]
         percentage = classification_results[category_name]['percentage']
@@ -243,12 +259,28 @@ def create_health_pie_chart(classification_results):
             labels.append(category_info['label'])
             sizes.append(percentage)
             colors.append(category_info['color'])
+            # Explode the largest slice slightly for effect
+            explode.append(0.05 if percentage == max_percentage else 0)
     
+    # Donut chart style
     fig, ax = plt.subplots(figsize=(8, 8))
     
-    ax.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%',
-           startangle=90, textprops={'fontsize': 12, 'weight': 'bold'})
-    ax.set_title('Crop Health Distribution', fontsize=14, fontweight='bold')
+    wedges, texts, autotexts = ax.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%',
+           startangle=90, pctdistance=0.85, explode=explode,
+           textprops={'fontsize': 12, 'weight': 'bold', 'color': '#333333'})
+           
+    # Draw circle for donut effect
+    centre_circle = plt.Circle((0,0), 0.70, fc='#f8f9fa')
+    fig.gca().add_artist(centre_circle)
+    
+    # Style styling
+    for text in texts:
+        text.set_weight('bold')
+    
+    ax.set_title('Health Distribution', fontsize=16, fontweight='bold', pad=20, color='#333333')
+    
+    # Background color
+    fig.patch.set_facecolor('#f8f9fa')
     
     plt.tight_layout()
     return fig

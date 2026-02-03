@@ -1,0 +1,42 @@
+{
+    "bbox": [
+        85.557919,
+        24.098107,
+        85.562639,
+        24.100301
+    ],
+    "crs": "EPSG:4326",
+    "classification_results": {
+        "unhealthy": {
+            "count": 184,
+            "percentage": 15.972222222222221
+        },
+        "moderate": {
+            "count": 968,
+            "percentage": 84.02777777777779
+        },
+        "healthy": {
+            "count": 0,
+            "percentage": 0.0
+        },
+        "total_pixels": 1152,
+        "statistics": {
+            "mean": 0.21622656285762787,
+            "std": 0.01928824372589588,
+            "min": 0.1436290144920349,
+            "max": 0.3228699266910553,
+            "median": 0.2176034301519394
+        }
+    },
+    "ai_results": {
+        "risk_level": "Stable",
+        "risk_explanation": "\u2705 Crop condition is stable or improving. No significant stress anomalies detected compared to the previous period.",
+        "action_recommendation": "\u2705 **Advice**: Maintain current care schedule. No immediate action required.",
+        "ai_score": 90,
+        "ndvi_change": -0.04793603718280792,
+        "current_mean": 0.21622656285762787,
+        "past_mean": 0.2641626000404358
+    },
+    "has_past_data": true,
+    "timestamp": "2026-02-03T13:42:11"
+}
