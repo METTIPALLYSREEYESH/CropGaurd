@@ -142,7 +142,7 @@
 
 ```bash
 # Clone repository
-git clone https://github.com/vardhangoud/CropGaurd.git
+git clone https://github.com/vardhan4161/CropGaurd.git
 cd CropGaurd
 
 # Install dependencies
@@ -382,7 +382,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Project Maintainer:** Vardhan Goud
 
-- GitHub: [@vardhangoud](https://github.com/vardhangoud)
+- GitHub: [@vardhan4161](https://github.com/vardhan4161)
 - Email: vardhangoud096@gmail.com
 
 ---
