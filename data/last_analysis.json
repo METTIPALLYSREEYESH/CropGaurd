@@ -1,44 +1,44 @@
 {
     "bbox": [
-        79.354259,
-        20.064996,
-        79.355621,
-        20.066236
+        78.16788,
+        17.621962,
+        78.170074,
+        17.624196
     ],
     "crs": "EPSG:4326",
     "classification_results": {
         "unhealthy": {
-            "count": 0,
-            "percentage": 0.0
+            "count": 104,
+            "percentage": 18.055555555555554
         },
         "moderate": {
-            "count": 7,
-            "percentage": 3.571428571428571
+            "count": 406,
+            "percentage": 70.48611111111111
         },
         "healthy": {
-            "count": 189,
-            "percentage": 96.42857142857143
+            "count": 66,
+            "percentage": 11.458333333333332
         },
-        "total_pixels": 196,
+        "total_pixels": 576,
         "statistics": {
-            "mean": 0.5901827812194824,
-            "std": 0.04225648567080498,
-            "min": 0.4413892924785614,
-            "max": 0.6743362545967102,
-            "median": 0.5999999642372131
+            "mean": 0.30439361929893494,
+            "std": 0.12050492316484451,
+            "min": 0.10307692736387253,
+            "max": 0.6271845102310181,
+            "median": 0.2680264115333557
         }
     },
     "ai_results": {
-        "risk_level": "Medium Risk",
-        "risk_explanation": "\u26a0\ufe0f Early signs of stress detected. Vegetation vigor is slightly lower than previous weeks. Monitor soil moisture and check for early pest signs.",
-        "action_recommendation": "\ud83d\udc40 **Advice**: Monitor soil moisture closely and check for early signs of yellowing.",
-        "ai_score": 70,
-        "ndvi_change": -0.06765949726104736,
-        "current_mean": 0.5901827812194824,
-        "past_mean": 0.6578422784805298,
-        "detected_crop": "Wheat",
-        "crop_confidence": "Medium"
+        "risk_level": "Stable",
+        "risk_explanation": "\u2705 Crop condition is stable or improving. No significant stress anomalies detected compared to the previous period.",
+        "action_recommendation": "\u2705 **Advice**: Maintain current care schedule. No immediate action required.",
+        "ai_score": 90,
+        "ndvi_change": 0.04025337100028992,
+        "current_mean": 0.30439361929893494,
+        "past_mean": 0.264140248298645,
+        "detected_crop": "Unknown Vegetation",
+        "crop_confidence": "Low"
     },
     "has_past_data": true,
-    "timestamp": "2026-02-03T18:25:18"
+    "timestamp": "2026-02-04T00:39:32"
 }

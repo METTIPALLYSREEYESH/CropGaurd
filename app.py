@@ -596,6 +596,246 @@ with tab2:
         classification_results = st.session_state.classification_results
         ai_results = st.session_state.get('ai_results', {})
         
+        
+        # ========== FARMER-FRIENDLY MODE ==========
+        if st.session_state.get('farmer_mode', False):
+            from utils.farmer_mode import get_farmer_status, get_farmer_actions, get_check_schedule, get_comparison_text
+            
+            st.markdown(f"### 🌾 {get_text('farmer_title', lang)}")
+            st.caption(get_text('farmer_subtitle', lang))
+            
+            if ai_results:
+                risk_level = ai_results['risk_level']
+                detected_crop = ai_results.get('detected_crop', 'Unknown')
+                
+                # Get farmer-friendly status
+                status = get_farmer_status(risk_level, lang, get_text)
+                
+                # Large Visual Status Card
+                st.markdown(f"""
+                <div style="background: linear-gradient(135deg, {status['color']} 0%, {status['color']}dd 100%); 
+                            color: white; padding: 50px 30px; border-radius: 25px; text-align: center; 
+                            margin: 20px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 5px solid {status['color']};">
+                    <div style="font-size: 140px; margin-bottom: 15px; line-height: 1;">{status['emoji']}</div>
+                    <div style="font-size: 80px; margin-bottom: 10px;">{status['visual']}</div>
+                    <h1 style="font-size: 64px; margin: 15px 0; font-weight: 900; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">{status['text']}</h1>
+                    <h2 style="font-size: 42px; margin: 10px 0; opacity: 0.95;">{status['subtitle']}</h2>
+                    <p style="font-size: 24px; margin-top: 25px; padding: 20px; background: rgba(255,255,255,0.2); border-radius: 15px; line-height: 1.5;">
+                        {status['message']}
+                    </p>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # What To Do - Using Translations
+                st.markdown(f"### 💧 {get_text('farmer_what_to_do', lang)}")
+                
+                actions = get_farmer_actions(risk_level, lang, get_text)
+                for icon, action, detail in actions:
+                    st.markdown(f"""
+                    <div style="background: white; padding: 25px; margin: 15px 0; border-radius: 15px; 
+                                border-left: 8px solid #3b82f6; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <span style="font-size: 48px;">{icon}</span>
+                            <div style="flex: 1;">
+                                <p style="font-size: 28px; margin: 0; font-weight: 600; color: #1f2937;">{action}</p>
+                                <p style="font-size: 16px; margin: 8px 0 0 0; color: #6b7280; font-style: italic;">{detail}</p>
+                            </div>
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                
+                
+                # Fetch Real Weather Data
+                from utils.weather import fetch_weather_data, get_farmer_weather_status
+                
+                # Get center coordinates from bbox
+                if bbox:
+                    # BBox.middle returns (lon, lat) tuple
+                    center_lon, center_lat = bbox.middle
+                    
+                    # Fetch weather data
+                    weather_data = fetch_weather_data(center_lat, center_lon)
+                    farmer_weather = get_farmer_weather_status(weather_data, lang)
+                else:
+                    # Fallback to default weather
+                    from utils.weather import get_default_weather
+                    weather_data = get_default_weather()
+                    farmer_weather = get_farmer_weather_status(weather_data, lang)
+
+                
+                # Weather - Using Real Data
+                st.markdown(f"### 🌤️ {get_text('farmer_weather', lang)}")
+                col1, col2, col3 = st.columns(3)
+                
+                with col1:
+                    st.markdown(f"""
+                    <div style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); 
+                                padding: 25px; border-radius: 15px; text-align: center; color: white;">
+                        <div style="font-size: 64px;">{farmer_weather['temp_icon']}</div>
+                        <p style="font-size: 20px; margin: 10px 0 0 0; font-weight: bold;">{get_text('farmer_hot', lang)}</p>
+                        <p style="font-size: 32px; margin: 5px 0; font-weight: 900;">{weather_data['temperature']:.0f}°C</p>
+                        <p style="font-size: 14px; opacity: 0.9;">{farmer_weather['temp_status']}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                
+                with col2:
+                    rain_display = get_text('farmer_no_rain', lang) if not weather_data['is_raining'] else "Yes"
+                    st.markdown(f"""
+                    <div style="background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%); 
+                                padding: 25px; border-radius: 15px; text-align: center; color: white;">
+                        <div style="font-size: 64px;">{farmer_weather['rain_icon']}</div>
+                        <p style="font-size: 20px; margin: 10px 0 0 0; font-weight: bold;">{get_text('farmer_rain', lang)}</p>
+                        <p style="font-size: 28px; margin: 5px 0; font-weight: 900;">{rain_display}</p>
+                        <p style="font-size: 14px; opacity: 0.9;">{farmer_weather['days_no_rain']} {get_text('farmer_no_rain_days', lang).split()[0] if farmer_weather['days_no_rain'] > 1 else ''}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                
+                with col3:
+                    st.markdown(f"""
+                    <div style="background: linear-gradient(135deg, #34d399 0%, #10b981 100%); 
+                                padding: 25px; border-radius: 15px; text-align: center; color: white;">
+                        <div style="font-size: 64px;">{farmer_weather['wind_icon']}</div>
+                        <p style="font-size: 20px; margin: 10px 0 0 0; font-weight: bold;">{get_text('farmer_wind', lang)}</p>
+                        <p style="font-size: 28px; margin: 5px 0; font-weight: 900;">{weather_data['wind_speed']:.0f} km/h</p>
+                        <p style="font-size: 14px; opacity: 0.9;">{farmer_weather['wind_status']}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                
+                # Weather warning based on real data
+                if farmer_weather['needs_water']:
+                    st.error(f"🌡️ **{get_text('farmer_very_hot', lang)}**", icon="⚠️")
+
+                
+                # Crop Info with Visual
+                st.markdown(f"### 🌾 {get_text('farmer_your_crop', lang)}")
+                
+                # Crop-specific emoji
+                crop_emoji = "🌾"
+                if detected_crop.lower() == "rice":
+                    crop_emoji = "🌾"
+                elif detected_crop.lower() in ["wheat", "corn"]:
+                    crop_emoji = "🌽"
+                elif detected_crop.lower() in ["cotton"]:
+                    crop_emoji = "☁️"
+                
+                st.markdown(f"""
+                <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+                            color: white; padding: 40px; border-radius: 20px; text-align: center;
+                            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);">
+                    <div style="font-size: 100px; margin-bottom: 15px;">{crop_emoji}</div>
+                    <p style="font-size: 32px; margin: 0; opacity: 0.9;">{get_text('farmer_crop_name', lang)}</p>
+                    <h2 style="font-size: 64px; margin: 15px 0; font-weight: 900;">{detected_crop}</h2>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Comparison with Previous Check
+                st.markdown(f"### 📊 {get_text('farmer_comparison', lang)}")
+                ndvi_change = ai_results.get('ndvi_change', 0)
+                comparison = get_comparison_text(ndvi_change, lang, get_text)
+                
+                st.markdown(f"""
+                <div style="background: {comparison['color']}20; padding: 30px; border-radius: 15px; 
+                            border: 3px solid {comparison['color']}; text-align: center;">
+                    <div style="font-size: 80px; margin-bottom: 15px;">{comparison['emoji']} {comparison['icon']}</div>
+                    <p style="font-size: 28px; color: {comparison['color']}; font-weight: bold; margin: 10px 0;">{comparison['text']}</p>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Crop Recommendations - Farmer Friendly
+                st.markdown(f"### 🌱 " + ("कौन सी फसल लगाएं" if lang == 'hi' else "What Crops to Grow" if lang == 'en' else "ఏ పంటలు పండించాలి"))
+                st.caption("आपके खेत के मौसम और मिट्टी के आधार पर" if lang == 'hi' else "Based on your field's weather and soil" if lang == 'en' else "మీ పొలం వాతావరణం మరియు నేల ఆధారంగా")
+                
+                from utils.crop_recommendation import recommend_crops, get_suitability_color
+                import datetime
+                
+                # Get current season
+                current_month = datetime.datetime.now().month
+                if current_month in [6, 7, 8, 9, 10]:
+                    current_season = 'Kharif'
+                elif current_month in [11, 12, 1, 2, 3]:
+                    current_season = 'Rabi'
+                else:
+                    current_season = 'Zaid'
+                
+                # Get recommendations
+                if bbox and weather_data:
+                    center_lon, center_lat = bbox.middle
+                    ndvi_mean = np.mean(st.session_state.ndvi_map[st.session_state.ndvi_map > 0])
+                    
+                    recommendations = recommend_crops(
+                        weather_data,
+                        ndvi_mean,
+                        center_lat,
+                        center_lon,
+                        current_season
+                    )
+                    
+                    # Show top 3 crops in farmer-friendly format
+                    for i, crop in enumerate(recommendations[:3]):
+                        suitability_color = get_suitability_color(crop['suitability'])
+                        crop_local_name = crop['local_names'].get(lang, crop['name'])
+                        
+                        # Farmer-friendly suitability text
+                        if crop['suitability'] == 'Highly Suitable':
+                            suit_text = "बहुत अच्छा" if lang == 'hi' else "Very Good" if lang == 'en' else "చాలా మంచిది"
+                            suit_emoji = "🌟"
+                        elif crop['suitability'] == 'Suitable':
+                            suit_text = "अच्छा" if lang == 'hi' else "Good" if lang == 'en' else "మంచిది"
+                            suit_emoji = "✅"
+                        elif crop['suitability'] == 'Moderately Suitable':
+                            suit_text = "ठीक है" if lang == 'hi' else "Okay" if lang == 'en' else "సరే"
+                            suit_emoji = "👍"
+                        else:
+                            suit_text = "नहीं" if lang == 'hi' else "Not Good" if lang == 'en' else "మంచిది కాదు"
+                            suit_emoji = "❌"
+                        
+                        # Water requirement in simple terms
+                        if crop['water_req'] == 'very_high':
+                            water_text = "बहुत ज्यादा पानी" if lang == 'hi' else "Lots of water" if lang == 'en' else "చాలా నీరు"
+                            water_icon = "💧💧💧"
+                        elif crop['water_req'] == 'medium':
+                            water_text = "सामान्य पानी" if lang == 'hi' else "Normal water" if lang == 'en' else "సాధారణ నీరు"
+                            water_icon = "💧💧"
+                        else:
+                            water_text = "कम पानी" if lang == 'hi' else "Less water" if lang == 'en' else "తక్కువ నీరు"
+                            water_icon = "💧"
+                        
+                        st.markdown(f"""
+                        <div style="background: linear-gradient(135deg, {suitability_color}20 0%, {suitability_color}10 100%); 
+                                    padding: 30px; margin: 20px 0; border-radius: 20px; 
+                                    border: 4px solid {suitability_color}; box-shadow: 0 6px 15px rgba(0,0,0,0.1);">
+                            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+                                <div style="font-size: 80px;">{crop['icon']}</div>
+                                <div style="flex: 1;">
+                                    <h2 style="margin: 0; font-size: 48px; color: {suitability_color};">{crop_local_name}</h2>
+                                    <p style="margin: 5px 0 0 0; font-size: 32px; font-weight: bold;">{suit_emoji} {suit_text}</p>
+                                </div>
+                            </div>
+                            <div style="background: white; padding: 20px; border-radius: 15px; margin-top: 15px;">
+                                <p style="font-size: 24px; margin: 10px 0;"><strong>{water_icon} {water_text}</strong></p>
+                                <p style="font-size: 20px; margin: 10px 0; color: #666;">{"मौसम: " if lang == 'hi' else "Season: " if lang == 'en' else "సీజన్: "}{", ".join(crop['season'])}</p>
+                            </div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                
+                # Help Section
+                st.markdown(f"### 📞 {get_text('farmer_help', lang)}")
+                st.info(get_text('farmer_help_text', lang), icon="ℹ️")
+                
+                # When to Check Again
+                check_again, check_time = get_check_schedule(risk_level, lang, get_text)
+                st.success(f"✅ **{get_text('farmer_check_next', lang)}** {check_again} ({check_time})", icon="📅")
+                
+                # Switch to technical view
+                st.markdown("---")
+                st.caption("🔧 " + ("Want more details? Turn off 'Farmer-Friendly Mode' in sidebar" if lang == 'en' else 
+                                     "ज्यादा जानकारी चाहिए? साइडबार में 'Farmer-Friendly Mode' बंद करें" if lang == 'hi' else
+                                     "మరిన్ని వివరాలు కావాలా? సైడ్‌బార్‌లో 'Farmer-Friendly Mode' ఆఫ్ చేయండి"))
+            
+            # Stop here - don't show technical data
+            st.stop()
+        
+        # ========== TECHNICAL MODE (Original) ==========
         # --- FEATURE 1, 3, 4, 6, 7: INTEGRATED AI DASHBOARD ---
         if ai_results:
             risk_level = ai_results['risk_level']
@@ -652,6 +892,59 @@ with tab2:
         </div>
         """, unsafe_allow_html=True)
 
+        # --- REAL WEATHER DATA ---
+        st.markdown("---")
+        st.subheader("🌤️ Weather Conditions")
+        
+        # Fetch real weather data
+        from utils.weather import fetch_weather_data
+        
+        if bbox:
+            center_lon, center_lat = bbox.middle
+            weather_data = fetch_weather_data(center_lat, center_lon)
+        else:
+            from utils.weather import get_default_weather
+            weather_data = get_default_weather()
+        
+        # Display weather in columns
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            temp_icon = "🔥" if weather_data['temperature'] > 35 else "☀️" if weather_data['temperature'] > 30 else "🌤️"
+            st.metric(
+                label=f"{temp_icon} Temperature",
+                value=f"{weather_data['temperature']:.1f}°C",
+                delta=None
+            )
+        
+        with col2:
+            rain_icon = "🌧️" if weather_data['is_raining'] else "☀️"
+            rain_status = "Raining" if weather_data['is_raining'] else f"{weather_data['days_since_rain']}d ago"
+            st.metric(
+                label=f"{rain_icon} Last Rain",
+                value=rain_status,
+                delta=None
+            )
+        
+        with col3:
+            wind_icon = "💨" if weather_data['wind_speed'] > 20 else "🍃"
+            st.metric(
+                label=f"{wind_icon} Wind Speed",
+                value=f"{weather_data['wind_speed']:.0f} km/h",
+                delta=None
+            )
+        
+        with col4:
+            st.metric(
+                label="💧 Humidity",
+                value=f"{weather_data['humidity']}%",
+                delta=None
+            )
+        
+        # Weather alert if needed
+        if weather_data['temperature'] > 32 and weather_data['days_since_rain'] > 7:
+            st.warning("⚠️ **High temperature + No recent rain** - Crops may need additional irrigation", icon="🌡️")
+
         # --- PDF REPORT DOWNLOAD ---
         st.markdown("---")
         col_pdf, col_spacer = st.columns([1, 2])
@@ -688,6 +981,75 @@ with tab2:
                     except Exception as e:
                         st.error(f"Error generating PDF: {str(e)}")
 
+        st.markdown("---")
+        
+        # --- CROP RECOMMENDATION SYSTEM ---
+        st.subheader("🌱 Crop Recommendations")
+        st.caption("Based on current weather, soil health, and location")
+        
+        from utils.crop_recommendation import recommend_crops, get_suitability_color
+        
+        # Get current season (simple heuristic)
+        import datetime
+        current_month = datetime.datetime.now().month
+        if current_month in [6, 7, 8, 9, 10]:  # June-Oct
+            current_season = 'Kharif'
+        elif current_month in [11, 12, 1, 2, 3]:  # Nov-Mar
+            current_season = 'Rabi'
+        else:
+            current_season = 'Zaid'
+        
+        # Get recommendations
+        if bbox and weather_data:
+            center_lon, center_lat = bbox.middle
+            ndvi_mean = np.mean(ndvi_map[ndvi_map > 0])  # Mean of valid NDVI values
+            
+            recommendations = recommend_crops(
+                weather_data,
+                ndvi_mean,
+                center_lat,
+                center_lon,
+                current_season
+            )
+            
+            # Show top 5 recommendations
+            st.markdown(f"**Current Season:** {current_season} | **Field Location:** {center_lat:.2f}°N, {center_lon:.2f}°E")
+            st.markdown("---")
+            
+            for i, crop in enumerate(recommendations[:5]):
+                suitability_color = get_suitability_color(crop['suitability'])
+                
+                # Crop card
+                with st.expander(f"{crop['icon']} **{crop['name']}** - {crop['local_names'].get(lang, crop['name'])}", expanded=(i==0)):
+                    col1, col2 = st.columns([2, 1])
+                    
+                    with col1:
+                        st.markdown(f"""
+                        <div style="background: {suitability_color}15; padding: 15px; border-radius: 10px; border-left: 5px solid {suitability_color};">
+                            <h4 style="color: {suitability_color}; margin: 0;">{crop['suitability']}</h4>
+                            <p style="margin: 5px 0; font-size: 24px; font-weight: bold;">Score: {crop['score']}/100</p>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        
+                        # Reasons
+                        if crop['reasons']:
+                            st.markdown("**✅ Why This Crop:**")
+                            for reason in crop['reasons']:
+                                st.markdown(f"- {reason}")
+                        
+                        # Warnings
+                        if crop['warnings']:
+                            st.markdown("**⚠️ Considerations:**")
+                            for warning in crop['warnings']:
+                                st.markdown(f"- {warning}")
+                    
+                    with col2:
+                        st.metric("Water Need", crop['water_req'].replace('_', ' ').title())
+                        st.metric("Season", ", ".join(crop['season']))
+                
+                if i < 4:  # Don't add separator after last item
+                    st.markdown("")
+        
         st.markdown("---")
 
         # --- FEATURE 5: TIME COMPARISON MODE ---

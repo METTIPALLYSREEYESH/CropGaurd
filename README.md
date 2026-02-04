@@ -1,303 +1,396 @@
-# 🌾 CropGuard - Crop Health Monitoring System
+# 🌾 CropGuard - AI-Powered Crop Health Monitoring
 
-**Satellite-based crop health assessment using Sentinel-2 imagery and NDVI analysis**
+<div align="center">
 
-![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.31-red.svg)
-![License](https://img.shields.io/badge/License-MIT-green.svg)
+![CropGuard Banner](https://img.shields.io/badge/CropGuard-AI%20Crop%20Monitoring-green?style=for-the-badge&logo=leaf)
+[![Python](https://img.shields.io/badge/Python-3.11+-blue?style=for-the-badge&logo=python)](https://www.python.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red?style=for-the-badge&logo=streamlit)](https://streamlit.io/)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
----
+**Revolutionizing Agriculture with Satellite AI** 🛰️🌱
 
-## 🚀 Features
+[Features](#-features) • [Demo](#-demo) • [Installation](#-installation) • [Usage](#-usage) • [Tech Stack](#-tech-stack)
 
-- **📍 Interactive Map** - GPS location detection and global search
-- **✏️ Drawing Tools** - Draw your field area directly on the map
-- **🛰️ Real Satellite Data** - Sentinel-2 L2A imagery (10m resolution)
-- **🧮 NDVI Analysis** - Automated vegetation index computation
-- **📊 Health Classification** - 3-tier system (Healthy/Moderate/Unhealthy)
-- **🗺️ Visual Results** - Interactive maps with color-coded overlays
-- **📈 Statistics** - Detailed metrics and distribution charts
+</div>
 
 ---
 
-## 📋 Prerequisites
+## 🌟 Overview
 
-- Python 3.8 or higher
+**CropGuard** is an intelligent crop health monitoring system that leverages **Sentinel-2 satellite imagery** and **AI-powered analysis** to help farmers make data-driven decisions. With support for **3 languages** (English, Hindi, Telugu) and a **farmer-friendly mode**, CropGuard makes advanced agricultural technology accessible to everyone.
+
+### 🎯 Key Highlights
+
+- 🛰️ **Real-time Satellite Data** - Live Sentinel-2 imagery analysis
+- 🤖 **AI Risk Assessment** - Intelligent crop health scoring (0-100)
+- 🌤️ **Live Weather Integration** - Real-time weather from Open-Meteo API
+- 🌱 **Smart Crop Recommendations** - 10 crops analyzed based on weather, soil & location
+- 👨‍🌾 **Farmer-Friendly Mode** - Simple language with Hindi/Telugu support
+- 📊 **Interactive Maps** - NDVI visualization with time comparison
+- 📄 **PDF Reports** - Downloadable field analysis reports
+
+---
+
+## ✨ Features
+
+### 🔍 **Advanced Crop Monitoring**
+
+<table>
+<tr>
+<td width="50%">
+
+#### 🛰️ Satellite Analysis
+- **NDVI Calculation** from Sentinel-2
+- **Cloud-free** image selection
+- **Time-series comparison** (Before vs Now)
+- **Health classification** (Healthy/Moderate/Unhealthy)
+
+</td>
+<td width="50%">
+
+#### 🤖 AI-Powered Insights
+- **Risk Level Detection** (High/Medium/Stable)
+- **AI Health Score** (0-100 scale)
+- **Confidence Rating** with visual indicators
+- **Actionable Recommendations**
+
+</td>
+</tr>
+</table>
+
+### 🌍 **Real-World Data Integration**
+
+| Feature | Description | API |
+|---------|-------------|-----|
+| 🌤️ **Weather** | Temperature, Rain, Wind, Humidity | Open-Meteo (Free) |
+| 🌱 **Crop Detection** | AI-based crop type identification | Custom ML Model |
+| 📍 **Location** | GPS, Search, or Manual coordinates | Nominatim |
+
+### 🌾 **Crop Recommendation System**
+
+**10 Crops Analyzed:**
+- 🌾 Rice (धान / వరి)
+- 🌾 Wheat (गेहूं / గోధుమ)
+- ☁️ Cotton (कपास / పత్తి)
+- 🎋 Sugarcane (गन्ना / చెరకు)
+- 🌽 Maize (मक्का / మొక్కజొన్న)
+- 🫘 Soybean (सोयाबीन / సోయాబీన్)
+- 🥜 Groundnut (मूंगफली / వేరుశెనగ)
+- 🫘 Chickpea (चना / శనగలు)
+- 🍅 Tomato (टमाटर / టమోటా)
+- 🧅 Onion (प्याज / ఉల్లిపాయ)
+
+**Scoring Algorithm:**
+- ✅ Temperature suitability (40 points)
+- 💧 Water availability (25 points)
+- 🌱 Soil health from NDVI (20 points)
+- 📍 Region compatibility (10 points)
+- 📅 Season alignment (5 points)
+
+### 👨‍🌾 **Farmer-Friendly Mode**
+
+<table>
+<tr>
+<td width="50%">
+
+**Simple Language**
+- No technical jargon
+- Relatable comparisons
+- "Crops thirsty like person in summer"
+- Visual status indicators
+
+</td>
+<td width="50%">
+
+**Multilingual Support**
+- 🇬🇧 English
+- 🇮🇳 Hindi (हिंदी)
+- 🇮🇳 Telugu (తెలుగు)
+- Auto-translates all content
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🚀 Demo
+
+### Quick Start with Demo Mode
+
+1. Click **"🎬 Load Demo Scenario"** in sidebar
+2. Go to **"📊 Analysis Results"** tab
+3. Toggle **"👨‍🌾 Farmer-Friendly Mode"** to see simplified view
+
+### Real Analysis
+
+1. Get free Sentinel Hub credentials: [sentinel-hub.com](https://www.sentinel-hub.com/)
+2. Enter Client ID & Secret in sidebar
+3. Choose location (GPS/Search/Coordinates)
+4. Click **"🚀 Run Analysis"**
+
+---
+
+## 📦 Installation
+
+### Prerequisites
+
+- Python 3.11+
 - Sentinel Hub account (free tier available)
 
----
-
-## 🔧 Installation
-
-### 1. Clone or Download
+### Setup
 
 ```bash
-cd D:\Hack\N1\CropGuard
-```
+# Clone repository
+git clone https://github.com/yourusername/CropGuard.git
+cd CropGuard
 
-### 2. Install Dependencies
-
-```bash
+# Install dependencies
 pip install -r requirements.txt
-```
 
-### 3. Get Sentinel Hub Credentials
-
-1. Visit: https://www.sentinel-hub.com/
-2. Create a free account
-3. Go to: Dashboard → User Settings → OAuth clients
-4. Click "Create new OAuth client"
-5. Copy your **CLIENT_ID** and **CLIENT_SECRET**
-
----
-
-## 🎯 Usage
-
-### Run the Application
-
-```bash
+# Run application
 streamlit run app.py
 ```
 
-The app will automatically open in your browser at `http://localhost:8501`
+### Environment Variables (Optional)
 
-### Workflow
-
-1. **Enter Credentials**
-   - Paste your Sentinel Hub Client ID and Secret in the sidebar
-
-2. **Select Area** (Choose one method)
-   - **Option A**: Click location button → Draw on map
-   - **Option B**: Search for location → Enter area size
-   - **Option C**: Manually enter coordinates
-
-3. **Run Analysis**
-   - Click "🚀 Analyze Crop Health" button
-   - Wait 10-30 seconds for processing
-
-4. **View Results**
-   - Switch to "Results" tab
-   - Explore charts, maps, and statistics
+Create `.env` file:
+```env
+SENTINEL_CLIENT_ID=your_client_id
+SENTINEL_CLIENT_SECRET=your_client_secret
+```
 
 ---
 
-## 📊 How It Works
+## 💻 Usage
 
-### 1. Data Acquisition
-- Fetches Sentinel-2 L2A satellite imagery
-- Last 30 days of data
-- 10-meter spatial resolution
-- Automatic cloud filtering
+### 1. **Select Field Area**
 
-### 2. NDVI Computation
+Three methods to choose your field:
+
+```python
+# Method 1: GPS Location
+Click "📍 Use My Location" button
+
+# Method 2: Search
+Search for "Village Name, State, India"
+
+# Method 3: Manual Coordinates
+Latitude: 17.39
+Longitude: 78.491
+Area: 1.0 km²
 ```
-NDVI = (NIR - Red) / (NIR + Red)
-```
-- NIR: Near-Infrared band (B08)
-- Red: Red band (B04)
-- Temporal averaging for accuracy
 
-### 3. Health Classification
-- 🟢 **Healthy**: NDVI ≥ 0.5 (Dense vegetation)
-- 🟡 **Moderate**: 0.2 ≤ NDVI < 0.5 (Sparse vegetation)
-- 🔴 **Unhealthy**: NDVI < 0.2 (Bare soil/stressed crops)
+### 2. **Run Analysis**
+
+```bash
+# Enter Sentinel Hub credentials
+Client ID: your_client_id
+Client Secret: your_client_secret
+
+# Click "🚀 Run Analysis"
+# Wait 30-60 seconds for satellite data processing
+```
+
+### 3. **View Results**
+
+**Technical Mode:**
+- AI Health Score (0-100)
+- Risk Level with explanation
+- Weather Conditions (4 metrics)
+- Crop Recommendations (Top 5)
+- Interactive NDVI maps
+- PDF Report download
+
+**Farmer Mode:**
+- 😰/😐/😊 Visual status
+- Simple action steps
+- Weather in farmer's terms
+- Top 3 crop suggestions
+- Local language support
 
 ---
 
-## 🗂️ Project Structure
+## 🛠️ Tech Stack
+
+### Frontend
+- **Streamlit** - Interactive web UI
+- **Folium** - Interactive maps
+- **Plotly** - Data visualization
+
+### Backend
+- **Python 3.11** - Core language
+- **NumPy** - NDVI calculations
+- **Sentinel Hub API** - Satellite imagery
+- **Open-Meteo API** - Weather data (FREE!)
+
+### AI/ML
+- Custom risk assessment model
+- Crop detection algorithm
+- Multi-factor recommendation engine
+
+### Data Sources
+- 🛰️ **Sentinel-2** - 10m resolution satellite imagery
+- 🌤️ **Open-Meteo** - Real-time weather data
+- 📍 **Nominatim** - Location geocoding
+
+---
+
+## 📊 Project Structure
 
 ```
 CropGuard/
-├── app.py                  # Main Streamlit application
-├── config.py               # Configuration and constants
-├── requirements.txt        # Python dependencies
-├── .env.example           # Example environment file
+├── app.py                          # Main Streamlit application
 ├── utils/
-│   ├── __init__.py
-│   ├── satellite.py       # Sentinel Hub data fetching
-│   ├── ndvi.py            # NDVI computation
-│   └── visualization.py   # Map and chart generation
-└── README.md              # This file
+│   ├── satellite.py                # Sentinel Hub integration
+│   ├── ndvi.py                     # NDVI calculation
+│   ├── ai_risk_model.py            # AI risk assessment
+│   ├── crop_detection.py           # Crop type detection
+│   ├── crop_recommendation.py      # Crop suggestion engine
+│   ├── weather.py                  # Weather API integration
+│   ├── farmer_mode.py              # Farmer-friendly helpers
+│   ├── translations.py             # Multilingual support
+│   ├── visualization.py            # Map & chart generation
+│   ├── report_generator.py         # PDF report creation
+│   ├── persistence.py              # Data storage
+│   └── field_manager.py            # Saved fields management
+├── data/
+│   └── demo_scenario.json          # Demo data
+├── config.py                       # Configuration settings
+└── requirements.txt                # Python dependencies
 ```
 
 ---
 
-## 🎨 Screenshots
+## 🌈 Features in Detail
 
-### Interactive Map
-- GPS location detection
-- Global location search
-- Drawing tools (rectangle/polygon)
-- Satellite/map layer toggle
+### 🎨 Farmer-Friendly Mode
 
-### Results Dashboard
-- NDVI histogram with thresholds
-- Pie chart of health distribution
-- Interactive result map with overlay
-- Detailed statistics table
-
----
-
-## 🌍 Example Locations
-
-Try these coordinates for testing:
-
-**Punjab, India (Wheat fields)**
-- Lat: 30.9010, Lon: 75.8573, Area: 5 km²
-
-**Iowa, USA (Corn belt)**
-- Lat: 41.8780, Lon: -93.0977, Area: 10 km²
-
-**Ukraine (Grain region)**
-- Lat: 48.3794, Lon: 31.1656, Area: 8 km²
-
----
-
-## ⚙️ Configuration
-
-Edit `config.py` to customize:
-
-- Default map location and zoom
-- NDVI thresholds
-- Time window (default: 30 days)
-- Resolution (default: 10m)
-- Health category colors
-
----
-
-## 🐛 Troubleshooting
-
-### "No data found"
-- Check coordinates are correct
-- Try different time period (area might be cloudy)
-- Verify Sentinel Hub credentials
-
-### "Authentication failed"
-- Ensure CLIENT_ID and CLIENT_SECRET are correct
-- Check Sentinel Hub account is active
-
-### "Area too large"
-- Keep area under 100 km² for best performance
-- Larger areas take longer to process
-
-### Map not loading
-- Check internet connection
-- Ensure all dependencies are installed
-- Try refreshing the browser
-
----
-
-## 📚 Technologies Used
-
-- **Streamlit** - Web framework
-- **Folium** - Interactive maps
-- **sentinelhub** - Satellite data API
-- **NumPy** - Numerical processing
-- **Matplotlib** - Visualizations
-- **Shapely** - Geometry processing
-- **geopy** - Geocoding
-
----
-
-## 🎓 Scientific Background
-
-### NDVI (Normalized Difference Vegetation Index)
-- Widely used vegetation index since 1970s
-- Measures photosynthetic activity
-- Range: -1 to +1
-- Higher values = healthier vegetation
-
-### Sentinel-2
-- European Space Agency (ESA) satellite
-- 10-meter resolution (best free data)
-- 5-day revisit time
-- 13 spectral bands
-- Free and open data
-
----
-
-## 🚀 Deployment Options
-
-### Local
-```bash
-streamlit run app.py
+**Visual Status Cards:**
+```
+😰 URGENT - Crops Need Water
+🌾➡️💀 (Crop dying visual)
+"Your crops are thirsty, like a person needs water in summer heat"
 ```
 
-### Streamlit Cloud (Free)
-1. Push code to GitHub
-2. Visit: https://streamlit.io/cloud
-3. Connect repository
-4. Deploy!
+**Simple Actions:**
+```
+💧 Start watering TODAY
+   Like giving water to thirsty person
+   
+⏰ Water for 2-3 hours
+   Morning or evening time
+   
+👀 Check again tomorrow
+   Visit field in morning
+```
 
-### Docker
-```dockerfile
-FROM python:3.9-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-CMD ["streamlit", "run", "app.py"]
+**Weather in Farmer's Terms:**
+```
+☀️ Hot          🌧️ Rain        💨 Wind
+28°C            7 days ago      12 km/h
+warm            No rain         light
+```
+
+### 📈 AI Risk Assessment
+
+**Scoring Factors:**
+1. NDVI Change (-1 to +1)
+2. Absolute NDVI value
+3. Weather context
+4. Historical comparison
+5. Confidence level
+
+**Risk Levels:**
+- 🔴 **High Risk** (Score < 50) - Immediate action needed
+- 🟠 **Medium Risk** (50-79) - Monitor closely
+- 🟢 **Stable** (80-100) - Maintain current care
+
+### 🗺️ Interactive Maps
+
+**Features:**
+- Toggle Map/Satellite view
+- NDVI overlay with color gradient
+- Health classification zones
+- Time comparison mode
+- Zoom & pan controls
+
+---
+
+## 🔧 Configuration
+
+### Sentinel Hub Setup
+
+1. Sign up at [sentinel-hub.com](https://www.sentinel-hub.com/)
+2. Create OAuth client
+3. Copy Client ID & Secret
+4. Enter in CropGuard sidebar
+
+### Customization
+
+Edit `config.py`:
+```python
+# NDVI Thresholds
+NDVI_UNHEALTHY = 0.2
+NDVI_MODERATE = 0.5
+
+# Time Window
+TIME_WINDOW_DAYS = 30
+
+# Resolution
+RESOLUTION = 10  # meters per pixel
 ```
 
 ---
 
-## 📈 Performance
+## 📝 API Credits
 
-- **Small field (1 km²)**: ~5-10 seconds
-- **Medium field (10 km²)**: ~15-30 seconds
-- **Large area (100 km²)**: ~2-5 minutes
-
-*Times include data download (depends on internet speed)*
+- **Sentinel Hub** - Satellite imagery (Free tier: 30,000 processing units/month)
+- **Open-Meteo** - Weather data (Completely free, no API key needed!)
+- **Nominatim** - Geocoding (Free, rate-limited)
 
 ---
 
 ## 🤝 Contributing
 
-Contributions welcome! Areas for improvement:
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-- [ ] Multi-temporal analysis (track changes over time)
-- [ ] Additional vegetation indices (EVI, SAVI, NDWI)
-- [ ] Export results (PDF reports, GeoTIFF)
-- [ ] Mobile app version
-- [ ] Machine learning integration
-- [ ] Weather data overlay
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
 
 ---
 
 ## 📄 License
 
-MIT License - Free for educational and research use
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
 ## 🙏 Acknowledgments
 
-- **ESA Copernicus** - Sentinel-2 satellite data
-- **Sentinel Hub** - Data access API
-- **Streamlit** - Web framework
-- **Folium** - Interactive maps
+- **Sentinel Hub** for satellite imagery API
+- **Open-Meteo** for free weather data
+- **Streamlit** for the amazing framework
+- **Indian farmers** for inspiration and feedback
 
 ---
 
-## 📞 Support
+## 📧 Contact
 
-For issues or questions:
-1. Check the Troubleshooting section
-2. Review Sentinel Hub documentation
-3. Verify all dependencies are installed
+**Project Maintainer:** Your Name
 
----
-
-## 🎯 Use Cases
-
-- **Precision Agriculture** - Identify stress areas early
-- **Crop Monitoring** - Track vegetation health over time
-- **Yield Prediction** - Correlate NDVI with crop yields
-- **Irrigation Planning** - Detect water stress
-- **Research** - Analyze vegetation patterns
+- GitHub: [@yourusername](https://github.com/yourusername)
+- Email: your.email@example.com
 
 ---
 
-**🌾 CropGuard - Empowering farmers with satellite intelligence**
+<div align="center">
 
-*Built with ❤️ for sustainable agriculture*
+**Made with ❤️ for Indian Farmers** 🇮🇳
+
+**Star ⭐ this repo if you find it helpful!**
+
+</div>
