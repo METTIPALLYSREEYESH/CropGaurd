@@ -142,8 +142,8 @@
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/CropGuard.git
-cd CropGuard
+git clone https://github.com/vardhangoud/CropGaurd.git
+cd CropGaurd
 
 # Install dependencies
 pip install -r requirements.txt
@@ -380,10 +380,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📧 Contact
 
-**Project Maintainer:** Your Name
+**Project Maintainer:** Vardhan Goud
 
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your.email@example.com
+- GitHub: [@vardhangoud](https://github.com/vardhangoud)
+- Email: vardhangoud096@gmail.com
 
 ---
 
