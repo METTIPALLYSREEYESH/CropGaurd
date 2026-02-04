@@ -1,44 +1,44 @@
 {
     "bbox": [
-        78.16788,
-        17.621962,
-        78.170074,
-        17.624196
+        74.331238,
+        30.33156,
+        74.33333,
+        30.332769
     ],
     "crs": "EPSG:4326",
     "classification_results": {
         "unhealthy": {
-            "count": 104,
-            "percentage": 18.055555555555554
+            "count": 0,
+            "percentage": 0.0
         },
         "moderate": {
-            "count": 406,
-            "percentage": 70.48611111111111
+            "count": 0,
+            "percentage": 0.0
         },
         "healthy": {
-            "count": 66,
-            "percentage": 11.458333333333332
+            "count": 260,
+            "percentage": 100.0
         },
-        "total_pixels": 576,
+        "total_pixels": 260,
         "statistics": {
-            "mean": 0.30439361929893494,
-            "std": 0.12050492316484451,
-            "min": 0.10307692736387253,
-            "max": 0.6271845102310181,
-            "median": 0.2680264115333557
+            "mean": 0.7960045337677002,
+            "std": 0.03502505272626877,
+            "min": 0.6455129981040955,
+            "max": 0.8600237369537354,
+            "median": 0.7940643429756165
         }
     },
     "ai_results": {
         "risk_level": "Stable",
-        "risk_explanation": "\u2705 Crop condition is stable or improving. No significant stress anomalies detected compared to the previous period.",
-        "action_recommendation": "\u2705 **Advice**: Maintain current care schedule. No immediate action required.",
-        "ai_score": 90,
-        "ndvi_change": 0.04025337100028992,
-        "current_mean": 0.30439361929893494,
-        "past_mean": 0.264140248298645,
-        "detected_crop": "Unknown Vegetation",
-        "crop_confidence": "Low"
+        "risk_explanation": "\u2705 \u0c2a\u0c02\u0c1f \u0c2a\u0c30\u0c3f\u0c38\u0c4d\u0c25\u0c3f\u0c24\u0c3f \u0c38\u0c4d\u0c25\u0c3f\u0c30\u0c02\u0c17\u0c3e \u0c32\u0c47\u0c26\u0c3e \u0c2e\u0c46\u0c30\u0c41\u0c17\u0c41\u0c2a\u0c21\u0c41\u0c24\u0c4b\u0c02\u0c26\u0c3f\u0964 \u0c2e\u0c41\u0c28\u0c41\u0c2a\u0c1f\u0c3f \u0c15\u0c3e\u0c32\u0c02\u0c24\u0c4b \u0c2a\u0c4b\u0c32\u0c3f\u0c38\u0c4d\u0c24\u0c47 \u0c0e\u0c1f\u0c41\u0c35\u0c02\u0c1f\u0c3f \u0c2e\u0c41\u0c16\u0c4d\u0c2f\u0c2e\u0c48\u0c28 \u0c12\u0c24\u0c4d\u0c24\u0c3f\u0c21\u0c3f \u0c05\u0c38\u0c3e\u0c27\u0c3e\u0c30\u0c23\u0c24\u0c32\u0c41 \u0c17\u0c41\u0c30\u0c4d\u0c24\u0c3f\u0c02\u0c1a\u0c2c\u0c21\u0c32\u0c47\u0c26\u0c41\u0964",
+        "action_recommendation": "\u2705 **\u0c38\u0c32\u0c39\u0c3e**: \u0c2a\u0c4d\u0c30\u0c38\u0c4d\u0c24\u0c41\u0c24 \u0c38\u0c02\u0c30\u0c15\u0c4d\u0c37\u0c23 \u0c37\u0c46\u0c21\u0c4d\u0c2f\u0c42\u0c32\u0c4d\u200c\u0c28\u0c41 \u0c15\u0c4a\u0c28\u0c38\u0c3e\u0c17\u0c3f\u0c02\u0c1a\u0c02\u0c21\u0c3f\u0964 \u0c24\u0c15\u0c4d\u0c37\u0c23 \u0c1a\u0c30\u0c4d\u0c2f \u0c05\u0c35\u0c38\u0c30\u0c02 \u0c32\u0c47\u0c26\u0c41\u0964",
+        "ai_score": 100,
+        "ndvi_change": 0.20630258321762085,
+        "current_mean": 0.7960045337677002,
+        "past_mean": 0.5897019505500793,
+        "detected_crop": "Wheat",
+        "crop_confidence": "Medium"
     },
     "has_past_data": true,
-    "timestamp": "2026-02-04T00:39:32"
+    "timestamp": "2026-02-04T02:26:35"
 }

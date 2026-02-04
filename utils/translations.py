@@ -124,6 +124,23 @@ TRANSLATIONS = {
         'farmer_detail_green': 'Green and strong',
         'farmer_detail_weekly': 'Once a week',
         'farmer_detail_relax': 'Relax',
+        
+        # Disease Detection
+        'disease_detection': '🔬 Disease Detection',
+        'disease_risk': 'Disease Risk Level',
+        'detected_diseases': 'Detected Diseases',
+        'disease_confidence': 'Confidence',
+        'disease_severity': 'Severity',
+        'disease_description': 'Description',
+        'disease_treatment': '💊 Treatment',
+        'disease_prevention': '🛡️ Prevention Tips',
+        'disease_critical': 'CRITICAL - Disease presence likely',
+        'disease_high': 'HIGH - Disease conditions present',
+        'disease_moderate': 'MODERATE - Monitor carefully',
+        'disease_low': 'LOW - Disease risk minimal',
+        'no_disease_detected': '✅ No significant disease risk detected',
+        'weather_favors_disease': '⚠️ Current weather favors disease spread',
+        'rapid_ndvi_drop': '⚠️ Rapid NDVI drop detected - sign of disease stress',
     },
     
     'hi': {
@@ -244,6 +261,23 @@ TRANSLATIONS = {
         'farmer_detail_green': 'हरी और मजबूत',
         'farmer_detail_weekly': 'हफ्ते में एक बार',
         'farmer_detail_relax': 'आराम करें',
+        
+        # Disease Detection
+        'disease_detection': '🔬 रोग निर्धारण',
+        'disease_risk': 'रोग जोखिम स्तर',
+        'detected_diseases': 'पहचाने गए रोग',
+        'disease_confidence': 'आत्मविश्वास',
+        'disease_severity': 'गंभीरता',
+        'disease_description': 'विवरण',
+        'disease_treatment': '💊 उपचार',
+        'disease_prevention': '🛡️ रोकथाम के सुझाव',
+        'disease_critical': 'गंभीर - रोग की संभावना है',
+        'disease_high': 'उच्च - रोग की स्थिति मौजूद है',
+        'disease_moderate': 'मध्यम - सावधानीपूर्वक निगरानी करें',
+        'disease_low': 'कम - रोग का जोखिम न्यूनतम है',
+        'no_disease_detected': '✅ कोई महत्वपूर्ण रोग जोखिम नहीं पाया गया',
+        'weather_favors_disease': '⚠️ मौजूदा मौसम रोग के प्रसार को बढ़ावा देता है',
+        'rapid_ndvi_drop': '⚠️ तेजी से NDVI गिरावट देखी गई - रोग तनाव का संकेत',
     },
     
     'te': {
@@ -300,6 +334,23 @@ TRANSLATIONS = {
         # Messages
         'analysis_complete': '✅ విశ్లేషణ పూర్తయింది! **ఫలితాలు** ట్యాబ్ చూడండి।',
         'no_analysis': '👈 దయచేసి ముందుగా **ప్రాంతాన్ని ఎంచుకోండి** ట్యాబ్‌లో విశ్లేషణను పూర్తి చేయండి।',
+        
+        # Disease Detection
+        'disease_detection': '🔬 వ్యాధి గుర్తింపు',
+        'disease_risk': 'వ్యాధి ప్రమాద స్థరం',
+        'detected_diseases': 'గుర్తించిన వ్యాధులు',
+        'disease_confidence': 'విశ్వాసం',
+        'disease_severity': 'తీవ్రత',
+        'disease_description': 'వివరణ',
+        'disease_treatment': '💊 చికిత్స',
+        'disease_prevention': '🛡️ నిరోధక చిట్కాలు',
+        'disease_critical': 'విమర్శనీయ - వ్యాధి ఉండే అవకాశం',
+        'disease_high': 'ఎక్కువ - వ్యాధి పరిస్థితి ఉంది',
+        'disease_moderate': 'మధ్యస్థ - జాగ్రత్తగా పర్యవేక్షించండి',
+        'disease_low': 'తక్క - వ్యాధి ప్రమాదం కనిష్ఠమైనది',
+        'no_disease_detected': '✅ ఎటువంటి ముఖ్యమైన వ్యాధి ప్రమాదం గుర్తించబడలేదు',
+        'weather_favors_disease': '⚠️ ప్రస్తుత వాతావరణం వ్యాధి వ్యాప్తిని ఉత్సాహిస్తుంది',
+        'rapid_ndvi_drop': '⚠️ NDVI వేగంగా పడిపోతుంది - వ్యాధి ఒత్తిడి సూచన',
     }
 }
 

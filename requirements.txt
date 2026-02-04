@@ -7,3 +7,4 @@ matplotlib
 shapely
 geopy
 python-dotenv
+reportlab

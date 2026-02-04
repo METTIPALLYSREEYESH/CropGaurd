@@ -42,6 +42,7 @@ from utils.translations import get_text, TRANSLATIONS
 from utils.report_generator import generate_pdf_report
 from utils.field_manager import save_field, load_fields, get_field_bbox
 from utils.confidence import calculate_confidence, get_confidence_color, get_confidence_icon
+from utils.disease_detection import detect_diseases, get_disease_severity_color, get_disease_risk_color
 from config import APP_TITLE, APP_ICON, DEFAULT_LOCATION, DEFAULT_AREA_KM2
 
 # Page configuration
@@ -944,6 +945,75 @@ with tab2:
         # Weather alert if needed
         if weather_data['temperature'] > 32 and weather_data['days_since_rain'] > 7:
             st.warning("⚠️ **High temperature + No recent rain** - Crops may need additional irrigation", icon="🌡️")
+
+        # --- DISEASE DETECTION SYSTEM ---
+        st.markdown("---")
+        st.subheader(f"🔬 {get_text('disease_detection', lang)}")
+        
+        # Get NDVI values from ai_results
+        current_ndvi = ai_results.get('current_mean', 0)
+        past_ndvi = ai_results.get('past_mean', current_ndvi)
+        
+        # Run disease detection
+        disease_results = detect_diseases(
+            current_ndvi_mean=current_ndvi,
+            past_ndvi_mean=past_ndvi,
+            detected_crop=detected_crop,
+            weather_data=weather_data,
+            confidence_threshold=0.45
+        )
+        
+        # Display disease risk level
+        disease_risk_level = disease_results['disease_risk_level']
+        disease_risk_color = get_disease_risk_color(disease_risk_level)
+        
+        st.markdown(f"""
+        <div style="text-align: center; margin-bottom: 15px;">
+            <span style="background-color: {disease_risk_color}20; color: {disease_risk_color}; padding: 10px 20px; border-radius: 25px; font-weight: bold; border: 2px solid {disease_risk_color}; font-size: 16px;">
+                {disease_risk_level} Disease Risk
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Display detected diseases
+        if disease_results['detected_diseases']:
+            st.write(f"**{get_text('detected_diseases', lang)}:**")
+            
+            for i, disease in enumerate(disease_results['detected_diseases'], 1):
+                disease_severity = disease['severity']
+                disease_name = disease['disease_name']
+                confidence = disease['confidence']
+                severity_color = get_disease_severity_color(disease_severity)
+                
+                # Disease card
+                st.markdown(f"""
+                <div style="background-color: {severity_color}15; border-left: 4px solid {severity_color}; padding: 12px; border-radius: 5px; margin-bottom: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <strong style="font-size: 16px; color: {severity_color};">{i}. {disease_name}</strong>
+                        <span style="background-color: {severity_color}; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px;">
+                            {disease_severity} ({confidence*100:.0f}% confidence)
+                        </span>
+                    </div>
+                    <p style="margin: 5px 0; font-size: 13px;">📝 {disease['description']}</p>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Show treatment and prevention for top 2 diseases
+                if i <= 2:
+                    with st.expander(f"💊 Treatment & Prevention - {disease_name}", expanded=i==1):
+                        st.write(f"**Treatment Options:**")
+                        for treatment in disease['treatments'][:3]:
+                            st.write(f"• {treatment}")
+                        
+                        st.write(f"\n**Prevention Tips:**")
+                        for prevention in disease['prevention'][:3]:
+                            st.write(f"• {prevention}")
+        else:
+            st.success(f"✅ {get_text('no_disease_detected', lang)}")
+        
+        # Disease recommendations
+        if disease_results['recommendations']:
+            st.info("\n".join(disease_results['recommendations']))
 
         # --- PDF REPORT DOWNLOAD ---
         st.markdown("---")
